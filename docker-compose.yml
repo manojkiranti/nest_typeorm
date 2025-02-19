@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: .
+    image: my-nest-app
+    container_name: nest-app
+    env_file:
+      - .env
+    # This line helps the container resolve "host.docker.internal" to your host
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "3000:3000"
+    # "depends_on" is no longer needed since there's no db service
