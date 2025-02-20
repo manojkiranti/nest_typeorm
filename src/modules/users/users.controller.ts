@@ -1,4 +1,11 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserEntity } from './entities/user.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -6,8 +13,11 @@ import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { UserDto } from './dto/user.dto';
 import { Roles } from '../auth/roles.decorators';
 import { RolesGuard } from '../auth/roles.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
+// import { CacheInterceptor } from '@nestjs/cache-manager';
 
-@Controller('users')
+@ApiBearerAuth('JWT-auth')
+@Controller({ path: 'users', version: '1' })
 @UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -16,6 +26,7 @@ export class UsersController {
   @Get()
   @Roles('admin')
   @UseGuards(RolesGuard)
+  // @UseInterceptors(CacheInterceptor)
   async getAllUsers(): Promise<UserEntity[]> {
     return await this.usersService.findAll();
   }

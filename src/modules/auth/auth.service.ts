@@ -3,6 +3,7 @@ import {
   Injectable,
   UnauthorizedException,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -15,6 +16,7 @@ export class AuthService {
     private userService: UsersService,
     private jwtService: JwtService,
   ) {}
+  private readonly logger = new Logger(AuthService.name);
   async validateUserCredentials(
     email: string,
     password: string,
@@ -39,7 +41,7 @@ export class AuthService {
       roles: user.roles.map((role) => role.name),
     };
 
-    console.log('login payload', payload);
+    this.logger.log('login payload', payload);
     const access_token = this.jwtService.sign(payload);
     user['accessToken'] = access_token;
     user['tokenType'] = 'Bearer';
